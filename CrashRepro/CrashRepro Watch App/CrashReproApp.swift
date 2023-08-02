@@ -25,7 +25,7 @@ struct CrashRepro_Watch_AppApp: App {
         print("SKPaymentQueue.countryCode: \(String(describing: SKPaymentQueue.default().storefront?.countryCode))")
         print("CMMovementDisorderManager.authorizationStatus(): \(CMMovementDisorderManager.authorizationStatus())")
         print("monitorKinesiasExpirationDate: \(String(describing: disorderManager.monitorKinesiasExpirationDate()))")
-        print("lastProcessedDate: \(disorderManager.lastProcessedDate())")
+        print("lastProcessedDate: \(String(describing: disorderManager.lastProcessedDate()))")
         disorderManager.queryDyskineticSymptom(
             from: Date(),
             to: Date()) { (dyskineticSymptomResult, error) in

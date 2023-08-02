@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  CrashRepro
+//  CrashRepro Watch App
 //
-//  Created by Bruce Daniel Rune Labs on 7/31/23.
+//  Created by Bruce Daniel Rune Labs on 8/2/23.
 //
 
 import SwiftUI

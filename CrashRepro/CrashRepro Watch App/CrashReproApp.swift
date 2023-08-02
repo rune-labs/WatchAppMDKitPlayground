@@ -20,36 +20,50 @@ struct CrashRepro_Watch_AppApp: App {
                 ContentView()
             }
             .onChange(of: scenePhase, perform: { value in
-                DispatchQueue.global().async {
-                    switch value {
-                    case .active:
-                        testAPIs()
-                    case .background:
-                        break
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
-                    }
+                switch value {
+                case .active:
+                    testAPIs()
+                    break
+                case .background:
+                    break
+                case .inactive:
+                    break
+                @unknown default:
+                    break
                 }
             })
         }
     }
     
     func testAPIs() {
+        print("Thread.current.isMainThread: \(Thread.current.isMainThread)")
+        print("SKPaymentQueue.countryCode: \(String(describing: SKPaymentQueue.default().storefront?.countryCode))")
+        print("CMMovementDisorderManager.authorizationStatus(): \(CMMovementDisorderManager.authorizationStatus())")
+        
         disorderManager.monitorKinesias(forDuration: 60.0 * 60.0 * 24.0 * 7.0)
-       print("identifierForVendor: \(String(describing: WKInterfaceDevice.current().identifierForVendor?.uuidString))")
-       print("SKPaymentQueue.countryCode: \(String(describing: SKPaymentQueue.default().storefront?.countryCode))")
-       print("CMMovementDisorderManager.authorizationStatus(): \(CMMovementDisorderManager.authorizationStatus())")
-       print("monitorKinesiasExpirationDate: \(String(describing: disorderManager.monitorKinesiasExpirationDate()))")
-       print("lastProcessedDate: \(String(describing: disorderManager.lastProcessedDate()))")
-       if let lastProcessed = disorderManager.lastProcessedDate() {
-           disorderManager.queryDyskineticSymptom(
-               from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
-               to: lastProcessed) { (dyskineticSymptomResult, error) in
-               print("queryDyskineticSymptom.dyskineticSymptomResult: \(dyskineticSymptomResult)")
-               print("queryDyskineticSymptom.error: \(String(describing: error))")
-           }
-       }
+        
+        print("identifierForVendor: \(String(describing: WKInterfaceDevice.current().identifierForVendor?.uuidString))")
+        
+        // Often the execution will stop here without a crash. Just can't
+        // debug or get a print to show up after this
+        
+        print("monitorKinesiasExpirationDate: \(String(describing: disorderManager.monitorKinesiasExpirationDate()))")
+        
+        print("lastProcessedDate: \(String(describing: disorderManager.lastProcessedDate()))")
+        
+        if let lastProcessed = disorderManager.lastProcessedDate() {
+            disorderManager.queryDyskineticSymptom(
+                from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
+                to: lastProcessed) { (dyskineticSymptomResult, error) in
+                    print("queryDyskineticSymptom.dyskineticSymptomResult: \(dyskineticSymptomResult)")
+                    print("queryDyskineticSymptom.error: \(String(describing: error))")
+                }
+            disorderManager.queryTremor(
+                from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
+                to: lastProcessed) { (tremorSymptomResult, error) in
+                    print("queryTremor.tremorSymptomResult: \(tremorSymptomResult)")
+                    print("queryTremor.error: \(String(describing: error))")
+            }
+        }
     }
 }

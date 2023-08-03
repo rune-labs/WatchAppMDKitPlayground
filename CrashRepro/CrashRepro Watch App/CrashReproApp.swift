@@ -69,10 +69,14 @@ public class TestAppViewModel: ObservableObject {
     
     func queryPDSymptoms() {
         DispatchQueue.global().async {
-            self.kinesiasExpiration = self.disorderManager.monitorKinesiasExpirationDate()
+            Task { @MainActor in
+                self.kinesiasExpiration = self.disorderManager.monitorKinesiasExpirationDate()
+            }
             print("expirationDate: \(String(describing: self.kinesiasExpiration))")
-            
-            self.lastProcessed = self.disorderManager.lastProcessedDate()
+
+            Task { @MainActor in
+                self.lastProcessed = self.disorderManager.lastProcessedDate()
+            }
             print("lastProcessedDate: \(String(describing: self.lastProcessed))")
             
             if let lastProcessed = self.disorderManager.lastProcessedDate() {

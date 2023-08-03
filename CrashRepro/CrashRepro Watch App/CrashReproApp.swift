@@ -24,9 +24,7 @@ struct CrashRepro_Watch_AppApp: App {
             .onChange(of: scenePhase, perform: { value in
                 switch value {
                 case .active:
-                    DispatchQueue.global().async() {
-                        viewModel.refresh()
-                    }
+                    viewModel.refresh()
                     break
                 case .background:
                     break
@@ -49,8 +47,9 @@ public class TestAppViewModel: ObservableObject {
     @Published private(set) var kinesiasExpiration: Date?
     @Published private(set) var authStatus: CMAuthorizationStatus?
     
-    
+    @MainActor
     public func refresh() {
+        
         print("Thread.current.isMainThread: \(Thread.current.isMainThread)")
         print("SKPaymentQueue.countryCode: \(String(describing: SKPaymentQueue.default().storefront?.countryCode))")
         print("CMMovementDisorderManager.authorizationStatus(): \(CMMovementDisorderManager.authorizationStatus())")
@@ -66,20 +65,31 @@ public class TestAppViewModel: ObservableObject {
         kinesiasExpiration = disorderManager.monitorKinesiasExpirationDate()
         print("lastProcessedDate: \(String(describing: disorderManager.lastProcessedDate()))")
         lastProcessed = disorderManager.lastProcessedDate()
-        if let lastProcessed = disorderManager.lastProcessedDate() {
-            disorderManager.queryDyskineticSymptom(
-                from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
-                to: lastProcessed) { (dyskineticSymptomResult, error) in
-                    self.dyskinesiaResults = dyskineticSymptomResult.count
-                    print("queryDyskineticSymptom.dyskineticSymptomResult: \(dyskineticSymptomResult)")
-                    print("queryDyskineticSymptom.error: \(String(describing: error))")
-                }
-            disorderManager.queryTremor(
-                from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
-                to: lastProcessed) { (tremorSymptomResult, error) in
-                    self.tremorResults = tremorSymptomResult.count
-                    print("queryTremor.tremorSymptomResult: \(tremorSymptomResult)")
-                    print("queryTremor.error: \(String(describing: error))")
+
+        queryPDSymptoms()
+    }
+    
+    func queryPDSymptoms() {
+        DispatchQueue.global().async {
+            if let lastProcessed = self.disorderManager.lastProcessedDate() {
+                self.disorderManager.queryDyskineticSymptom(
+                    from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
+                    to: lastProcessed) { (dyskineticSymptomResult, error) in
+                        Task { @MainActor in
+                            self.dyskinesiaResults = dyskineticSymptomResult.count
+                        }
+                        print("queryDyskineticSymptom.dyskineticSymptomResult: \(dyskineticSymptomResult)")
+                        print("queryDyskineticSymptom.error: \(String(describing: error))")
+                    }
+                self.disorderManager.queryTremor(
+                    from: lastProcessed.addingTimeInterval(-60.0 * 60.0 * 3.0),
+                    to: lastProcessed) { (tremorSymptomResult, error) in
+                        Task { @MainActor in
+                            self.tremorResults = tremorSymptomResult.count
+                        }
+                        print("queryTremor.tremorSymptomResult: \(tremorSymptomResult)")
+                        print("queryTremor.error: \(String(describing: error))")
+                    }
             }
         }
     }

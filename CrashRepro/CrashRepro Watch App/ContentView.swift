@@ -12,6 +12,15 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
+            
+            if let vendor = viewModel.vendorID {
+                Text("VendorID: \(vendor)")
+            }
+            
+            if let countryCode = viewModel.countryCode {
+                Text("Country Code: \(countryCode)")
+            }
+
             if let status = viewModel.authStatus {
                 Text("CMAuthorizationStatus: \(status.rawValue)")
             }

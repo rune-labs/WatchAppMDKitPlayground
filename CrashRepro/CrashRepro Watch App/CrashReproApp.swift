@@ -24,7 +24,9 @@ struct CrashRepro_Watch_AppApp: App {
             .onChange(of: scenePhase, perform: { value in
                 switch value {
                 case .active:
-                    viewModel.refresh()
+                    DispatchQueue.global().async() {
+                        viewModel.refresh()
+                    }
                     break
                 case .background:
                     break

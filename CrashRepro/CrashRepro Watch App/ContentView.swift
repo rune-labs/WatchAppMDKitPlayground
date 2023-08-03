@@ -8,12 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject private var viewModel: TestAppViewModel
+
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            if let lastProcessed = viewModel.lastProcessed {
+                Text("Last Processed: \(lastProcessed)")
+            }
+            
+            if let expiration = viewModel.kinesiasExpiration {
+                Text("Monitoring Expiration: \(expiration)")
+            }
+            
+            if let tremor = viewModel.tremorResults {
+                Text("Tremor: \(tremor)")
+            }
+            
+            if let dyskinesia = viewModel.dyskinesiaResults {
+                Text("Dyskinesia: \(dyskinesia)")
+            }
         }
         .padding()
     }

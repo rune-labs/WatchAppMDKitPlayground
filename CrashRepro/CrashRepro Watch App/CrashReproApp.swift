@@ -45,12 +45,14 @@ public class TestAppViewModel: ObservableObject {
     @Published private(set) var dyskinesiaResults: Int?
     @Published private(set) var lastProcessed: Date?
     @Published private(set) var kinesiasExpiration: Date?
+    @Published private(set) var authStatus: CMAuthorizationStatus?
+    
     
     public func refresh() {
         print("Thread.current.isMainThread: \(Thread.current.isMainThread)")
         print("SKPaymentQueue.countryCode: \(String(describing: SKPaymentQueue.default().storefront?.countryCode))")
         print("CMMovementDisorderManager.authorizationStatus(): \(CMMovementDisorderManager.authorizationStatus())")
-        
+        authStatus = CMMovementDisorderManager.authorizationStatus()
         disorderManager.monitorKinesias(forDuration: 60.0 * 60.0 * 24.0 * 7.0)
         
         print("identifierForVendor: \(String(describing: WKInterfaceDevice.current().identifierForVendor?.uuidString))")

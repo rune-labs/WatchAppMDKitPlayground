@@ -13,6 +13,11 @@ struct ContentView: View {
     var body: some View {
         ScrollView {
             VStack {
+                Button(action: {
+                    viewModel.refresh()
+                }) {
+                    Text("Fetch MDKit")
+                }
 
                 if let vendor = viewModel.vendorID {
                     Text("VendorID: \(vendor)")

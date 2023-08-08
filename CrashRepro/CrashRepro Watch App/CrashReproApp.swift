@@ -21,19 +21,6 @@ struct CrashRepro_Watch_AppApp: App {
                 ContentView()
                     .environmentObject(viewModel)
             }
-            .onChange(of: scenePhase, perform: { value in
-                switch value {
-                case .active:
-                    viewModel.refresh()
-                    break
-                case .background:
-                    break
-                case .inactive:
-                    break
-                @unknown default:
-                    break
-                }
-            })
         }
     }
 }
